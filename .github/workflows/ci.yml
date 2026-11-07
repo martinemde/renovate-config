@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate configuration and effective policy
+        env:
+          RENOVATE_IMAGE: ghcr.io/renovatebot/renovate:44.216.5@sha256:029cf58d0213a20ed3f5e2c86f6261f29e73675b7e1b86659de096e0d3408051
+        run: |
+          docker run --rm --network none -v "$PWD:/repo:ro" -w /repo "$RENOVATE_IMAGE" renovate-config-validator --no-global default.json
+          docker run --rm --network none -v "$PWD:/repo:ro" -w /repo --entrypoint node "$RENOVATE_IMAGE" test/policy.mjs
