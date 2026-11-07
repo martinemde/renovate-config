@@ -6,19 +6,24 @@ consuming repository.
 
 ## Adopt
 
-After `v1.0.0` is published, add `renovate.json`:
+Add `renovate.json` using a reviewed release:
 
 ```json
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>martinemde/renovate-config#v1.0.0"]
+  "extends": ["github>martinemde/renovate-config#v1.0.0"],
+  "packageRules": [
+    { "matchManagers": ["renovate-config"], "automerge": false }
+  ]
 }
 ```
 
-Pin a reviewed release, not `main`. A tag is not immutable by itself: maintainers
-must protect release tags from updates and deletion with a GitHub ruleset.
+Pin a reviewed release, not `main`. This repository protects `v*` release tags
+against updates and deletion with a no-bypass GitHub ruleset. A tag is not
+immutable by naming convention alone; repository administrators can change rules.
 For stronger content-addressed pinning, use the release commit SHA instead.
-Review preset version changes like code changes. Keep repository `packageRules`
+Review preset version changes like code changes. If you restrict `enabledManagers`,
+include `renovate-config` so Renovate can propose preset updates. Keep repository `packageRules`
 after inherited rules; for example, a final file-matching `automerge: false` rule
 keeps untested terminal plugins review-only.
 

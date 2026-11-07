@@ -1,7 +1,7 @@
 ---
 name: renovate-config
 repo: https://github.com/martinemde/renovate-config
-status: local-preparation
+status: active
 runtime: renovate-node-docker
 updated: 2026-11-07
 ---
@@ -11,4 +11,5 @@ updated: 2026-11-07
 Reusable policy for martinemde repositories. `default.json` is the published
 preset; repository-specific discovery and exceptions stay with each consumer.
 See README.md for adoption, limitations, required repository protection, and
-validation. GitHub repository and release publication are not yet performed.
+validation. Release tags are protected against updates and deletion; the `policy`
+check is required on main.
