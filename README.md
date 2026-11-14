@@ -4,6 +4,9 @@ Shared dependency-update policy and central GitHub App runner for Martin's
 repositories. Repository-specific managers, file patterns, grouping, and
 compatibility exceptions belong in the consuming repository.
 
+See [repository responsibilities and audit](docs/repository-responsibilities.md)
+for update ownership, required checks, and remaining gaps.
+
 ## Runner
 
 `.github/workflows/renovate.yml` runs at minutes 7 and 37 of every hour UTC.
