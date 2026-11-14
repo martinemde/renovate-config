@@ -1,5 +1,19 @@
 # Renovate repository responsibilities
 
+## Major and security update rollout
+
+The v1.1.0 preset allows major and security dependency updates to automerge.
+Adopt it only after the target has active, nonempty required CI checks with no
+Renovate bypass. Security updates bypass the seven-day release delay, not CI.
+Initial pins and shared-preset changes remain review-only. Existing compatibility
+constraints and deployment boundaries still apply; merging is not deployment
+approval, an infrastructure apply, or a runtime acceptance test.
+
+The central workflow matrix defines the ten repositories in this rollout.
+Consumer PRs and CI protection changes are staged separately. The historical
+audit below describes the pre-rollout state, not proof of current enforcement.
+
+
 Audited 2026-11-14 against repository configs and GitHub main-branch rules.
 
 The runner lives only in `martinemde/renovate-config`. The workflow matrix is the

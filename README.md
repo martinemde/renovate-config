@@ -19,7 +19,7 @@ to this repository's runner and CI, with automerge disabled.
 
 Containers pin PRs trigger build/smoke checks; merging affected recipes into main
 triggers publication. Beelink tracks allowlisted consumer Quadlet image pins.
-Both remain review-only. Renovate does not deploy or restart services. NUI source
+Dependency auto-merge must be enabled only after required CI is enforced in each target. Renovate does not deploy or restart services. NUI source
 version PRs still require reviewed revision/checksum updates before they build.
 
 ### Move the existing App runner from dotfiles
@@ -65,7 +65,7 @@ Add `renovate.json` using a reviewed release:
 ```json
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>martinemde/renovate-config#v1.0.0"],
+  "extends": ["github>martinemde/renovate-config#v1.1.0"],
   "packageRules": [
     { "matchManagers": ["renovate-config"], "automerge": false }
   ]
@@ -88,12 +88,12 @@ keeps untested terminal plugins review-only.
 - Two PRs per hour and five concurrent PRs for ordinary updates.
 - Seven-day minimum release age. Missing release timestamps fail closed;
   strict internal checks hold those updates pending rather than admitting them.
-- Squash PR automerge for minor, patch, and digest updates only. Major updates
-  explicitly disable automerge. Pin/pinDigest updates remain review-only.
+- Squash PR automerge for minor, patch, digest, and major updates after required CI.
+  Pin/pinDigest updates remain review-only.
 - Renovate performs the merge (`platformAutomerge: false`).
 - Pin GitHub Action references and Docker images to digests.
 - GitHub vulnerability alerts and OSV alerts are enabled. Security updates bypass
-  release aging but require review, even when the fix is minor, patch, or digest.
+  release aging and are eligible for automerge after required CI, including major fixes.
   Renovate's security-update exceptions to scheduling and PR limits still apply.
 
 ## Repository checks are separate
@@ -101,10 +101,12 @@ keeps untested terminal plugins review-only.
 This preset cannot create GitHub protection rules, install an App, supply tokens,
 or prove that tests cover an update. Each consumer must separately configure:
 
-1. Required CI checks in a branch ruleset/protection rule, covering the affected
+1. Enforced required CI checks in a branch ruleset/protection rule, covering the affected
    dependency's behavior. Do not use an empty check list as a substitute for tests.
 2. Squash merging and appropriately scoped Renovate credentials. Restrict bypass
-   privileges so the bot cannot skip the required checks.
+   privileges so the bot cannot skip the required checks. Do not adopt this preset
+   until nonempty required checks are active. A successful runner job is not a
+   substitute for target CI; the preset alone cannot enforce GitHub rules.
 3. Vulnerability alerts and supported lockfiles/ecosystems. Enable GitHub's
    dependency graph and grant the bot permission to read vulnerability alerts.
 
@@ -112,7 +114,8 @@ A seven-day delay and a digest pin do not establish package trust, provenance,
 or freedom from malware. OSV and GitHub advisory coverage is incomplete; an
 update not identified as vulnerable follows the ordinary automerge policy.
 Local configuration can override this preset, including its safety settings.
-Require review for changes to Renovate config, workflows, and release tags.
+Keep shared-preset changes and release tags review-only. Workflow dependency updates
+may automerge after required CI; this does not authorize unrelated workflow edits.
 
 ## Validate
 
