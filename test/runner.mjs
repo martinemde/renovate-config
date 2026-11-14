@@ -11,7 +11,7 @@ assert.ok(Object.values(workflow.permissions).every(value => value === 'read'));
 const job = workflow.jobs.renovate;
 const targets = job.strategy.matrix.repository;
 assert.equal(new Set(targets).size, targets.length);
-for (const target of ['dotfiles', 'containers', 'beelink', 'renovate-config']) {
+for (const target of ['dotfiles', 'containers', 'beelink', 'renovate-config', 'homeassistant', 'dohm-ble', 'unifi']) {
   assert.ok(targets.includes(target));
 }
 assert.equal(job.strategy['fail-fast'], false);

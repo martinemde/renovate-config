@@ -11,7 +11,7 @@ for update ownership, required checks, and remaining gaps.
 
 `.github/workflows/renovate.yml` runs at minutes 7 and 37 of every hour UTC.
 Its explicit matrix targets dotfiles, martinemde.com, micropub-publisher,
-almanac, containers, beelink, and renovate-config. Each job reads the target's
+almanac, containers, beelink, renovate-config, homeassistant, dohm-ble, and unifi. Each job reads the target's
 own config and gets an App token scoped to that repository. Failed jobs do not
 stop other repositories. There is no autodiscovery or global automerge override.
 `default.json` remains the published preset; `renovate.json` configures updates

@@ -15,6 +15,9 @@ second runner configuration. Per-repository rules override the shared preset.
 | almanac | Targeted but **skipped**: no Renovate config on main; no GitHub CI | None |
 | containers | Build-input pins, source-version proposals and GitHub Actions; merge rebuilds/publishes | None |
 | beelink | Allowlisted deployed/candidate Quadlet image references, not host-wide package management | None |
+| homeassistant | Python/test and integration pins, mise and add-on bases; manual merge, no deployment or flashing | Not audited |
+| dohm-ble | Python/test and HACS runtime dependencies, CI actions; manual merge, no BLE operations | Not audited |
+| unifi | Provider constraints/lockfiles and mise tools; manual merge, no infrastructure apply | Not audited |
 
 ## Publication is not deployment
 
