@@ -21,3 +21,4 @@ jobs:
         run: |
           docker run --rm --network none -v "$PWD:/repo:ro" -w /repo "$RENOVATE_IMAGE" renovate-config-validator --no-global default.json
           docker run --rm --network none -v "$PWD:/repo:ro" -w /repo --entrypoint node "$RENOVATE_IMAGE" test/policy.mjs
+          docker run --rm --network none -v "$PWD:/repo:ro" -w /repo --entrypoint node "$RENOVATE_IMAGE" test/runner.mjs

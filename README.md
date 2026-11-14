@@ -1,8 +1,56 @@
 # Renovate config
 
-Shared dependency-update policy for Martin's repositories. Repository-specific
-managers, file patterns, grouping, and compatibility exceptions belong in the
-consuming repository.
+Shared dependency-update policy and central GitHub App runner for Martin's
+repositories. Repository-specific managers, file patterns, grouping, and
+compatibility exceptions belong in the consuming repository.
+
+## Runner
+
+`.github/workflows/renovate.yml` runs at minutes 7 and 37 of every hour UTC.
+Its explicit matrix targets dotfiles, martinemde.com, micropub-publisher,
+almanac, containers, beelink, and renovate-config. Each job reads the target's
+own config and gets an App token scoped to that repository. Failed jobs do not
+stop other repositories. There is no autodiscovery or global automerge override.
+`default.json` remains the published preset; `renovate.json` configures updates
+to this repository's runner and CI, with automerge disabled.
+
+Containers pin PRs trigger build/smoke checks; merging affected recipes into main
+triggers publication. Beelink tracks allowlisted consumer Quadlet image pins.
+Both remain review-only. Renovate does not deploy or restart services. NUI source
+version PRs still require reviewed revision/checksum updates before they build.
+
+### Move the existing App runner from dotfiles
+
+Keep the same GitHub App and its permissions. Its account-wide installation
+already covers the targets; tokens remain restricted to one target per job.
+Do not enable the hosted Mend writer alongside this runner.
+
+1. Publish the dispatch-only, read-only replacement for the dotfiles Renovate
+   workflow. Disable its old scheduled workflow during cutover and wait for any
+   in-flight live run to finish. Do this before enabling this runner.
+2. Store `RENOVATE_APP_PRIVATE_KEY` as an Actions secret in **renovate-config**.
+   GitHub cannot read or transfer an existing Actions secret. Upload the original
+   PEM securely with `gh secret set RENOVATE_APP_PRIVATE_KEY -R martinemde/renovate-config < /secure/path/app.pem`.
+   If the original is unavailable, generate a new key for the same App in GitHub
+   settings. Never commit a key or print it in logs.
+3. Set Actions variable `RENOVATE_APP_ID` to the existing App ID/client ID
+   (currently `Iv23libaqaPV53cngKCW`), not the installation ID. Set it last:
+   scheduled jobs skip while it is absent. No credential is copied by this code
+   change.
+4. Dispatch **Renovate** here with `dry_run: true` first. This uses a read-only
+   `GITHUB_TOKEN`, needs no App secret, and writes no branches, PRs, or dashboards.
+   Then dispatch with `dry_run: false` and verify each target's job plus an
+   App-authored dashboard or PR. A dry run is not proof of live activation.
+5. Once the central live run succeeds, remove the old App ID variable and private
+   key secret from dotfiles. Revoke a replaced key only after successful cutover.
+
+The App permissions are contents, pull requests, issues, workflows and commit
+statuses read/write; administration, checks and vulnerability alerts read.
+The workflow's own `GITHUB_TOKEN` stays read-only. App-authored dependency PRs
+can trigger target CI; `GITHUB_TOKEN`-authored writes would not. Missing live
+credentials fail manual live dispatch explicitly. Migration is not complete
+until the old writer is stopped and a central live run succeeds.
+
 
 ## Adopt
 
@@ -71,6 +119,7 @@ age filtering. It makes no GitHub or registry requests.
 image='ghcr.io/renovatebot/renovate:44.216.5@sha256:029cf58d0213a20ed3f5e2c86f6261f29e73675b7e1b86659de096e0d3408051'
 docker run --rm --network none -v "$PWD:/repo:ro" -w /repo "$image" renovate-config-validator --no-global default.json
 docker run --rm --network none -v "$PWD:/repo:ro" -w /repo --entrypoint node "$image" test/policy.mjs
+docker run --rm --network none -v "$PWD:/repo:ro" -w /repo --entrypoint node "$image" test/runner.mjs
 ```
 
 The behavioral test intentionally uses internal APIs tied to the image version.
