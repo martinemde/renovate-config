@@ -75,10 +75,26 @@ jobs:
           permission-issues: write
           permission-workflows: write
           permission-vulnerability-alerts: read
+      - name: Create read-only target App token for dry run
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run && vars.RENOVATE_APP_ID != ''
+        id: dry-app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ vars.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ matrix.repository }}
+          permission-administration: read
+          permission-checks: read
+          permission-statuses: read
+          permission-contents: read
+          permission-pull-requests: read
+          permission-issues: read
+          permission-vulnerability-alerts: read
       - name: Plan dependency updates without writing to GitHub
         if: github.event_name == 'workflow_dispatch' && inputs.dry_run
         env:
-          RENOVATE_TOKEN: ${{ github.token }}
+          RENOVATE_TOKEN: ${{ steps.dry-app-token.outputs.token || github.token }}
           RENOVATE_DRY_RUN: full
         run: renovate "$RENOVATE_REPOSITORY"
       - name: Update dependency branches, pull requests, and dashboard

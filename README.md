@@ -37,8 +37,11 @@ Do not enable the hosted Mend writer alongside this runner.
    (currently `Iv23libaqaPV53cngKCW`), not the installation ID. Set it last:
    scheduled jobs skip while it is absent. No credential is copied by this code
    change.
-4. Dispatch **Renovate** here with `dry_run: true` first. This uses a read-only
-   `GITHUB_TOKEN`, needs no App secret, and writes no branches, PRs, or dashboards.
+4. Dispatch **Renovate** here with `dry_run: true` first. With App credentials
+   configured, this gets a read-only App token per target (including private
+   beelink). Without an App ID it falls back to `GITHUB_TOKEN` for public targets;
+   that token cannot read other private repositories. Dry runs write no branches,
+   PRs, or dashboards.
    Then dispatch with `dry_run: false` and verify each target's job plus an
    App-authored dashboard or PR. A dry run is not proof of live activation.
 5. Once the central live run succeeds, remove the old App ID variable and private
