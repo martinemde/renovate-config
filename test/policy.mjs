@@ -32,19 +32,21 @@ async function update(overrides = {}, local = {}, packageFile = 'package.json') 
   assert.ok(result);
   return result;
 }
-for (const updateType of ['minor', 'patch', 'digest']) {
+for (const updateType of ['minor', 'patch', 'digest', 'major']) {
   const effective = await update({ updateType });
   assert.equal(effective.automerge, true, updateType);
   assert.equal(effective.automergeType, 'pr');
   assert.equal(effective.automergeStrategy, 'squash');
   assert.equal(effective.platformAutomerge, false);
 }
-assert.equal((await update({ updateType: 'major', newVersion: '2.0.0' })).automerge, false);
+assert.equal((await update({ updateType: 'major', newVersion: '2.0.0' })).automerge, true);
 assert.equal((await update({ updateType: 'pinDigest' })).automerge, false);
-// Package rules are evaluated at multiple stages; an earlier enable must not leak.
-assert.equal((await applyPackageRules({ ...config, automerge: true, updateType: 'major' })).automerge, false);
+assert.equal((await update({ updateType: 'pin' })).automerge, false);
+for (const updateType of ['pin', 'pinDigest']) {
+  assert.equal((await update({ updateType, isVulnerabilityAlert: true })).automerge, false);
+}
 for (const updateType of ['minor', 'patch', 'digest', 'major']) {
-  assert.equal((await update({ updateType, isVulnerabilityAlert: true, automerge: true })).automerge, false, `security ${updateType}`);
+  assert.equal((await update({ updateType, isVulnerabilityAlert: true, automerge: false })).automerge, true, `security ${updateType}`);
 }
 // Exercise the actual OSV rule generation (not a network/database lookup).
 const securityRule = new Vulnerabilities(null).vulnerabilityToPackageRules({
@@ -55,7 +57,7 @@ const securityRule = new Vulnerabilities(null).vulnerabilityToPackageRules({
 assert.ok(securityRule);
 const security = await update({}, { packageRules: [securityRule] });
 assert.equal(security.isVulnerabilityAlert, true);
-assert.equal(security.automerge, false);
+assert.equal(security.automerge, true);
 assert.equal(security.minimumReleaseAge, null);
 assert.ok(security.addLabels.includes('security'));
 // Repository rules append after shared rules, retaining review-only exceptions.

@@ -8,11 +8,22 @@
     "renovate-config"
   ],
   "automerge": false,
+  "vulnerabilityAlerts": {"automerge": true},
   "packageRules": [
     {
-      "matchPackageNames": [
-        "*"
-      ],
+      "matchUpdateTypes": ["minor", "patch", "digest", "major"],
+      "automerge": true
+    },
+    {
+      "matchJsonata": ["isVulnerabilityAlert = true"],
+      "automerge": true
+    },
+    {
+      "matchManagers": ["renovate-config"],
+      "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["pin", "pinDigest"],
       "automerge": false
     }
   ]

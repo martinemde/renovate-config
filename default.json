@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "Conservative shared dependency update policy for martinemde repositories.",
+  "description": "CI-gated shared dependency update policy for martinemde repositories.",
   "extends": [
     "config:recommended",
     ":semanticCommits",
@@ -21,7 +21,7 @@
   "vulnerabilityAlerts": {
     "enabled": true,
     "minimumReleaseAge": null,
-    "automerge": false,
+    "automerge": true,
     "addLabels": [
       "security"
     ]
@@ -40,20 +40,19 @@
       "matchUpdateTypes": [
         "minor",
         "patch",
-        "digest"
-      ],
-      "automerge": true
-    },
-    {
-      "matchUpdateTypes": [
+        "digest",
         "major"
       ],
-      "automerge": false
+      "automerge": true
     },
     {
       "matchJsonata": [
         "isVulnerabilityAlert = true"
       ],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["pin", "pinDigest"],
       "automerge": false
     }
   ]
