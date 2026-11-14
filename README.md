@@ -15,7 +15,8 @@ almanac, containers, beelink, renovate-config, homeassistant, dohm-ble, and unif
 own config and gets an App token scoped to that repository. Failed jobs do not
 stop other repositories. There is no autodiscovery or global automerge override.
 `default.json` remains the published preset; `renovate.json` configures updates
-to this repository's runner and CI, with automerge disabled.
+to this repository's runner and CI. Its dependency updates may automerge after
+the required `policy` check; shared-preset updates still require review.
 
 Containers pin PRs trigger build/smoke checks; merging affected recipes into main
 triggers publication. Beelink tracks allowlisted consumer Quadlet image pins.
