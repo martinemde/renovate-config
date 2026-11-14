@@ -50,6 +50,10 @@
         "isVulnerabilityAlert = true"
       ],
       "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["pin", "pinDigest"],
+      "automerge": false
     }
   ]
 }

@@ -21,6 +21,10 @@
     {
       "matchManagers": ["renovate-config"],
       "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["pin", "pinDigest"],
+      "automerge": false
     }
   ]
 }

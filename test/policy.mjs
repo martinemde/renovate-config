@@ -42,6 +42,9 @@ for (const updateType of ['minor', 'patch', 'digest', 'major']) {
 assert.equal((await update({ updateType: 'major', newVersion: '2.0.0' })).automerge, true);
 assert.equal((await update({ updateType: 'pinDigest' })).automerge, false);
 assert.equal((await update({ updateType: 'pin' })).automerge, false);
+for (const updateType of ['pin', 'pinDigest']) {
+  assert.equal((await update({ updateType, isVulnerabilityAlert: true })).automerge, false);
+}
 for (const updateType of ['minor', 'patch', 'digest', 'major']) {
   assert.equal((await update({ updateType, isVulnerabilityAlert: true, automerge: false })).automerge, true, `security ${updateType}`);
 }
