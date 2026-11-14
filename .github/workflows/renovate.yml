@@ -33,7 +33,7 @@ jobs:
     container:
       # Actions command files are owned by the runner, not the image's default user.
       options: --user 0
-      image: ghcr.io/renovatebot/renovate:44.216.5@sha256:029cf58d0213a20ed3f5e2c86f6261f29e73675b7e1b86659de096e0d3408051
+      image: ghcr.io/renovatebot/renovate:44.239.1@sha256:7dba1a3b916a2cf302ba0df458ddcc8fcbac3c92d0fe9882ac13ba0363de656b
     env:
       LOG_LEVEL: debug
       RENOVATE_PLATFORM: github
